@@ -88,6 +88,7 @@
         
         otherParams.rows = rows;
         otherParams.tableOverflow = true;
+        otherParams.onload = this.onLoad;
         otherParams.onchange = this.onChange;
         otherParams.onundo = this.onChange;
         otherParams.onredo = this.onChange;
@@ -176,6 +177,12 @@
       
       resize: function(width, height) {
         
+      },
+      
+      onLoad: function(obj) {
+        if (HTMLWidgets.shinyMode) {
+          Shiny.setInputValue("excelr_loaded", obj.id)
+        }
       },
       
       onChange: function(obj){
