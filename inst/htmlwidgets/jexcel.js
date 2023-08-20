@@ -181,7 +181,7 @@
       
       onLoad: function(obj) {
         if (HTMLWidgets.shinyMode) {
-          Shiny.setInputValue("excelr_loaded", obj.id)
+          Shiny.setInputValue("app-layout-forecast-excelr_loaded", obj.id)
         }
       },
       
