@@ -89,6 +89,7 @@
         otherParams.rows = rows;
         otherParams.tableOverflow = true;
         otherParams.onchange = params.onChange;
+        otherParams.onafterchanges = this.onChange;
         otherParams.oninsertrow = this.onChange;
         otherParams.ondeleterow = this.onChange;
         otherParams.oninsertcolumn = this.onChange;
@@ -178,6 +179,7 @@
       
       onChange: function(obj, cell, x, y, value){
 
+        console.log("from this.onchange")
         console.log(cell)
         console.log(value)
         
