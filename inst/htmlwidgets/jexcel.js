@@ -97,6 +97,9 @@
         otherParams.onsort = this.onChange;
         otherParams.onmoverow = this.onChange;
         otherParams.onchangeheader = this.onChangeHeader;
+        otherParams.onload = params.onLoad;
+        otherParams.undo = params.onChange;
+        otherParams.redo = params.onChange;
         if(getSelectedData) {
           otherParams.onselection = this.onSelection;
         }
