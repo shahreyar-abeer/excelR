@@ -176,7 +176,10 @@
         
       },
       
-      onChange: function(obj){
+      onChange: function(obj, cell, x, y, value){
+
+        console.log(cell)
+        console.log(value)
         
         if (HTMLWidgets.shinyMode && excel) {
           
