@@ -185,9 +185,12 @@
         }
       },
       
-      onChange: function(obj){
+      onChange: function(obj, cell, x, y, value){
         
         if (HTMLWidgets.shinyMode && excel) {
+
+          console.log(cell)
+          console.log(value)
           
           var changedData = getOnChangeData (excel.getData(), this.columns, excel.getHeaders());
 
