@@ -183,7 +183,7 @@
       onChange: function(obj, change, x){
 
         console.log("from this.onchange")
-        console.log(cell)
+        console.log(change)
         console.log(x)
         
         if (HTMLWidgets.shinyMode && excel) {
