@@ -98,8 +98,8 @@
         otherParams.onmoverow = this.onChange;
         otherParams.onchangeheader = this.onChangeHeader;
         otherParams.onload = params.onLoad;
-        otherParams.undo = params.onChange;
-        otherParams.redo = params.onChange;
+        otherParams.onundo = params.onChange;
+        otherParams.onredo = params.onChange;
         if(getSelectedData) {
           otherParams.onselection = this.onSelection;
         }
@@ -180,11 +180,11 @@
         
       },
       
-      onChange: function(obj, cell, x, y, value){
+      onChange: function(obj, change, x){
 
         console.log("from this.onchange")
         console.log(cell)
-        console.log(value)
+        console.log(x)
         
         if (HTMLWidgets.shinyMode && excel) {
           
