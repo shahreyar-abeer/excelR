@@ -98,8 +98,8 @@
         otherParams.onmoverow = this.onChange;
         otherParams.onchangeheader = this.onChangeHeader;
         otherParams.onload = params.onLoad;
-        otherParams.onundo = params.onChange;
-        otherParams.onredo = params.onChange;
+        otherParams.onundo = params.onUndo;
+        otherParams.onredo = params.onRedo;
         if(getSelectedData) {
           otherParams.onselection = this.onSelection;
         }
