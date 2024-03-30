@@ -10,13 +10,12 @@
 
       return {
         renderValue: function(params) {
+          console.log(params.freezeColumns)
           var rowHeight = params.hasOwnProperty("rowHeight") ? params.rowHeight : undefined;
           var showToolbar = params.hasOwnProperty("showToolbar")? params.showToolbar: false;
           var dateFormat = params.hasOwnProperty("dateFormat")? params.dateFormat: "DD/MM/YYYY";
           var autoWidth = params.hasOwnProperty("autoWidth")? params.autoWidth: true;
           var autoFill = params.hasOwnProperty("autoFill")? params.autoFill: false;
-          console.log(params.freezeColumns)
-          var freezeColumns = params.freezeColumns
           var getSelectedData = params.hasOwnProperty("getSelectedData")? params.getSelectedData: false
           var imageColIndex = undefined;
           var otherParams = {};
@@ -90,10 +89,8 @@
 
         otherParams.rows = rows;
         otherParams.tableOverflow = true;
-        otherParams.onload = this.onLoad;
         otherParams.onchange = params.onChange;
-        otherParams.onundo = this.onChange;
-        otherParams.onredo = this.onChange;
+        otherParams.onafterchanges = this.onChange;
         otherParams.oninsertrow = this.onChange;
         otherParams.ondeleterow = this.onChange;
         otherParams.oninsertcolumn = this.onChange;
@@ -101,6 +98,9 @@
         otherParams.onsort = this.onChange;
         otherParams.onmoverow = this.onChange;
         otherParams.onchangeheader = this.onChangeHeader;
+        otherParams.onload = params.onLoad;
+        otherParams.onundo = params.onUndo;
+        otherParams.onredo = params.onRedo;
         if(getSelectedData) {
           otherParams.onselection = this.onSelection;
         }
@@ -125,7 +125,6 @@
         // If new instance of the table
         if(excel === null) {
           excel =  jexcel(container, otherParams);
-
           console.log(otherParams)
 
           if(autoWidth){
@@ -183,13 +182,7 @@
 
       },
 
-      onLoad: function(obj) {
-        if (HTMLWidgets.shinyMode) {
-          Shiny.setInputValue("app-layout-forecast-excelr_loaded", obj.id)
-        }
-      },
-
-      onChange: function(obj){
+      onChange: function(obj, change, x){
 
         if (HTMLWidgets.shinyMode && excel) {
 
