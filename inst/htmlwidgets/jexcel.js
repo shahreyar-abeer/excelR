@@ -1,13 +1,13 @@
   HTMLWidgets.widget({
     name: "jexcel",
-    
+
     type: "output",
-    
+
     factory: function(el, width, height) {
       var elementId = el.id;
       var container = document.getElementById(elementId);
       var excel = null;
-      
+
       return {
         renderValue: function(params) {
           var rowHeight = params.hasOwnProperty("rowHeight") ? params.rowHeight : undefined;
@@ -15,47 +15,49 @@
           var dateFormat = params.hasOwnProperty("dateFormat")? params.dateFormat: "DD/MM/YYYY";
           var autoWidth = params.hasOwnProperty("autoWidth")? params.autoWidth: true;
           var autoFill = params.hasOwnProperty("autoFill")? params.autoFill: false;
+          console.log(params.freezeColumns)
+          var freezeColumns = params.freezeColumns
           var getSelectedData = params.hasOwnProperty("getSelectedData")? params.getSelectedData: false
           var imageColIndex = undefined;
           var otherParams = {};
 
           Object.keys(params).forEach(function(ky) {
-            if(ky !== "dateFormat" && 
-            ky !== "rowHeight" && 
-            ky !== "autoWidth" && 
-            ky !== "getSelectedData" && 
+            if(ky !== "dateFormat" &&
+            ky !== "rowHeight" &&
+            ky !== "autoWidth" &&
+            ky !== "getSelectedData" &&
             ky !== "otherParams" ) {
-              
+
               // Check if the key is columns and check if the type is calendar, if yes add the date format
               if(ky === "columns"){
                 otherParams[ky] = params[ky].map(function(column, index){
                   if(column.type === "calendar" && column.options && columns.options !== null){
                     Object.keys(column.options).forEach(function(optionKey) {
-                      // This is how it is passed from R(array of string of length 1), 
+                      // This is how it is passed from R(array of string of length 1),
                       // we need to parse it as per jexcel format (just a string)
                       if(column.options[optionKey].length === 1){
                       column.options[optionKey] = column.options[optionKey][0]
                     }
                   });
                   }
-                  
+
                   // If the date format is not default we'll need to pass it properly to jexcel table
                   if(column.type === "calendar" && dateFormat !== "DD/MM/YYYY"){
                     column.options = {format: dateFormat}
                   }
-                  
+
                   // If image url is specified, we'll need to pass it to jexcel table only
-                  // in updateTable function,so here we'll first find the column index. This 
+                  // in updateTable function,so here we'll first find the column index. This
                   if(column.type === "image"){
                     imageColIndex = index;
                   }
                   return column;
                 });
-                
+
                 return;
               }
 
-               // A vector containg single string is converted to string by jsonlite need to convert 
+               // A vector containg single string is converted to string by jsonlite need to convert
                // it back to array of string for jexcel support
               if(ky === "colHeaders" && typeof(params[ky]) === "string"){
                 otherParams[ky] = [params[ky]];
@@ -69,14 +71,14 @@
             if (rowHeight) {
               var rows = {};
               rowHeight.map(function(data) {
-                return rows[data[0]] = { height: data[1] + 'px' 
+                return rows[data[0]] = { height: data[1] + 'px'
               }
             });
             return rows;
           }
           return {};
         })();
-        
+
         //Lets add the image url in the update table function
         if(imageColIndex){
           otherParams.updateTable = function (instance, cell, col, row, val, id) {
@@ -85,11 +87,11 @@
             }
           }
         }
-        
+
         otherParams.rows = rows;
         otherParams.tableOverflow = true;
         otherParams.onload = this.onLoad;
-        otherParams.onchange = this.onChange;
+        otherParams.onchange = params.onChange;
         otherParams.onundo = this.onChange;
         otherParams.onredo = this.onChange;
         otherParams.oninsertrow = this.onChange;
@@ -102,7 +104,7 @@
         if(getSelectedData) {
           otherParams.onselection = this.onSelection;
         }
-        
+
         if(showToolbar) {
           // Add toolbar to param
           otherParams.toolbar = [
@@ -119,47 +121,49 @@
             { type:'color', content:'format_color_fill', k:'background-color' },
           ]
         }
-        
-        // If new instance of the table   
+
+        // If new instance of the table
         if(excel === null) {
           excel =  jexcel(container, otherParams);
-          
+
+          console.log(otherParams)
+
           if(autoWidth){
             excel.table.setAttribute("style", "width: auto; height: auto; white-space: normal;")
           }
-          
+
           if(!autoWidth && autoFill){
             excel.table.setAttribute("style", "width: 100%; height: 100%; white-space: normal;")
             container.getElementsByClassName("jexcel_content")[0].setAttribute("style", "height:100%")
           }
-          
+
           container.excel = excel;
-          
+
           return;
         }
-        
+
         var  selection  = excel.selectedCell;
-        
+
         while (container.firstChild) {
           container.removeChild(container.firstChild);
         }
-        
+
         excel = jexcel(container, otherParams);
-        
+
         if(selection){
           excel.updateSelectionFromCoords(selection[0], selection[1], selection[2], selection[3]);
         }
-        
-        
+
+
         if(autoWidth){
           excel.table.setAttribute("style", "width: auto; height: auto; white-space: normal;")
         }
-        
+
         if(!autoWidth && autoFill){
           excel.table.setAttribute("style", "width: 100%; height: 100%; white-space: normal;")
           container.getElementsByClassName("jexcel_content")[0].setAttribute("style", "height:100%")
         }
-        
+
         container.excel = excel;
 
         if (HTMLWidgets.shinyMode && excel) {
@@ -172,70 +176,70 @@
             forSelectedVals: false,
           });
         }
-        
+
       },
-      
+
       resize: function(width, height) {
-        
+
       },
-      
+
       onLoad: function(obj) {
         if (HTMLWidgets.shinyMode) {
           Shiny.setInputValue("app-layout-forecast-excelr_loaded", obj.id)
         }
       },
-      
-      onChange: function(obj){
-        
-        if (HTMLWidgets.shinyMode && excel) {
-          
-          var changedData = getOnChangeData (excel.getData(), this.columns, excel.getHeaders());
 
-          Shiny.setInputValue(obj.id, 
+      onChange: function(obj){
+
+        if (HTMLWidgets.shinyMode && excel) {
+
+          var changedData = getOnChangeData (excel.getData(), this.getConfig().columns, excel.getHeaders());
+
+          Shiny.setInputValue(obj.id,
             {
-              data:changedData.data, 
+              data:changedData.data,
               colHeaders: changedData.colHeaders,
               colType: changedData.colType,
-              forSelectedVals: false, 
+              forSelectedVals: false,
             })
           }
         },
-        
+
         onChangeHeader: function(obj, column, oldValue, newValue){
-          
+
           if (HTMLWidgets.shinyMode) {
-            
-            var changedData = getOnChangeData (excel.getData(), this.columns, excel.getHeaders());
-            
+
+            var changedData = getOnChangeData (excel.getData(), this.getConfig().columns, excel.getHeaders());
+
             var newColHeader = changedData.colHeaders;
             newColHeader[parseInt(column)] = newValue;
-            
-            Shiny.setInputValue(obj.id, 
+
+            Shiny.setInputValue(obj.id,
               {
-                data:changedData.data, 
+                data:changedData.data,
                 colHeaders: newColHeader,
                 colType: changedData.colType,
-                forSelectedVals: false, 
+                forSelectedVals: false,
               })
             }
           },
           onDeleteColumn: function(obj, deletedColumn){
-        
+
             if (HTMLWidgets.shinyMode) {
-              var changedData = getOnChangeData (excel.getData(), this.columns, excel.getHeaders());
-              
+              var changedData = getOnChangeData (excel.getData(), this.getConfig().columns, excel.getHeaders());
+
               var newColHeader =  changedData.colHeaders;
 
-              Shiny.setInputValue(obj.id, 
+              Shiny.setInputValue(obj.id,
                 {
-                  data:changedData.data, 
-                data:changedData.data, 
-                  data:changedData.data, 
+                  data:changedData.data,
+                data:changedData.data,
+                  data:changedData.data,
                   colHeaders: newColHeader,
                   colType: changedData.colType,
-                  forSelectedVals: false, 
-                forSelectedVals: false, 
-                  forSelectedVals: false, 
+                  forSelectedVals: false,
+                forSelectedVals: false,
+                  forSelectedVals: false,
                 })
               }
             },
@@ -243,66 +247,66 @@
             if (HTMLWidgets.shinyMode) {
               // Get arrays between top to bottom, this will return the array of array for selected data
               var data =  this.data.reduce(function(acc, value, index){
-                
+
                 if(index >= borderTop && index <= borderBottom){
-                  
+
                   var val = value.reduce(function(innerAcc, innerValue, innerIndex){
-                    
+
                     if(innerIndex >= borderLeft && innerIndex <= borderRight){
-                      
+
                       innerAcc.push(innerValue);
                     }
-                    
+
                     return innerAcc;
                   },[])
-                  
+
                   acc.push(val);
                 }
-                
+
                 return acc;
               },[])
-              
-              var fullData =  getOnChangeData (excel.getData(), this.columns, excel.getHeaders());
 
-              Shiny.setInputValue(obj.id, 
+              var fullData =  getOnChangeData (excel.getData(), this.getConfig().columns, excel.getHeaders());
+
+              Shiny.setInputValue(obj.id,
                 {
                   fullData: fullData,
                   selectedData: data,
                   selectedDataBoundary:{
-                    borderLeft, 
-                    borderTop, 
-                    borderRight, 
+                    borderLeft,
+                    borderTop,
+                    borderRight,
                     borderBottom
                   },
                   forSelectedVals: true
                 })
-                
+
               }
             }
           };
         }
       });
-      
-      
+
+
       if (HTMLWidgets.shinyMode) {
-        
+
         // This function is used to set comments in the table
         Shiny.addCustomMessageHandler("excelR:setComments", function(message) {
-          
+
           var el = document.getElementById(message[0]);
           if (el) {
             el.excel.setComments(message[1], message[2]);
           }
         });
-        
+
         // This function is used to get comments  from table
         Shiny.addCustomMessageHandler("excelR:getComments", function(message) {
-          
+
           var el = document.getElementById(message[0]);
           if (el) {
             var comments = message[1] ? el.excel.getComments(message[1]): el.excel.getComments(null);
-            
-            Shiny.setInputValue(message[0], 
+
+            Shiny.setInputValue(message[0],
               {
                 comments
               });
@@ -315,30 +319,30 @@
 
               var excel = el.excel
 
-              var data = getOnChangeData(excel.getData(), excel.getConfig().columns, excel.getHeaders()) 
-              
-              Shiny.setInputValue(message[0], 
+              var data = getOnChangeData(excel.getData(), excel.getConfig().columns, excel.getHeaders())
+
+              Shiny.setInputValue(message[0],
                 {
-                  data:data.data, 
+                  data:data.data,
                   colHeaders: data.colHeaders,
                   colType: data.colType,
-                  forSelectedVals: false, 
+                  forSelectedVals: false,
                 })
               }
             });
 
         }
-        
-        
+
+
         function getOnChangeData (data, columns, colHeaders) {
           var colType = columns.map(function(column){
             return column.type;
           })
-          
+
           var colHeadersArray  = colHeaders.split(",")
           if(colHeadersArray.every(function (val){return (val ==='')})){
             var colHeaders = columns.map(function(column){ return column.title})
           }
-          
+
           return { data: data, colHeaders: colHeadersArray, colType: colType}
         }

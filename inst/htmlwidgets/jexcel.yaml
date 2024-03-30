@@ -1,8 +1,8 @@
 dependencies:
   - name: jexcel
-    version: 3.9.1
+    version: 4.10.1
     src: htmlwidgets/lib/jexcel
-    script: 
+    script:
       - js/jexcel.min.js
       - js/jsuites.js
     stylesheet:
