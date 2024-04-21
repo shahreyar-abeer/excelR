@@ -10,7 +10,6 @@
 
       return {
         renderValue: function(params) {
-          console.log(params.freezeColumns)
           var rowHeight = params.hasOwnProperty("rowHeight") ? params.rowHeight : undefined;
           var showToolbar = params.hasOwnProperty("showToolbar")? params.showToolbar: false;
           var dateFormat = params.hasOwnProperty("dateFormat")? params.dateFormat: "DD/MM/YYYY";
@@ -125,7 +124,6 @@
         // If new instance of the table
         if(excel === null) {
           excel =  jexcel(container, otherParams);
-          console.log(otherParams)
 
           if(autoWidth){
             excel.table.setAttribute("style", "width: auto; height: auto; white-space: normal;")
