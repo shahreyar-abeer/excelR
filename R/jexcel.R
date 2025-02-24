@@ -97,6 +97,7 @@ excelTable <-
            autoFill = FALSE,
            getSelectedData = FALSE,
            freezeColumns = 0,
+           hideIndex = TRUE,
            ...
            ) {
     # List of parameters to send to js
@@ -347,7 +348,8 @@ excelTable <-
       "showToolbar",
       "autoWidth",
       "autoFill",
-      "getSelectedData"
+      "getSelectedData",
+      "hideIndex"
     )) {
       argvalue <- get(arg)
       if(!is.null(argvalue)) {

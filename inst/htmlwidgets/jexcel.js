@@ -15,7 +15,8 @@
           var dateFormat = params.hasOwnProperty("dateFormat")? params.dateFormat: "DD/MM/YYYY";
           var autoWidth = params.hasOwnProperty("autoWidth")? params.autoWidth: true;
           var autoFill = params.hasOwnProperty("autoFill")? params.autoFill: false;
-          var getSelectedData = params.hasOwnProperty("getSelectedData")? params.getSelectedData: false
+          var getSelectedData = params.hasOwnProperty("getSelectedData")? params.getSelectedData: false;
+          var hideIndex = params.hasOwnProperty("hideIndex")? params.hideIndex: true
           var imageColIndex = undefined;
           var otherParams = {};
 
@@ -164,6 +165,10 @@
         container.excel = excel;
 
         if (HTMLWidgets.shinyMode && excel) {
+
+          excel.hideIndex();
+          console.log('hideIndex')
+
           Shiny.setInputValue(container.id, {
             data: params.data,
             colHeaders: params.colHeaders,
@@ -183,6 +188,11 @@
       onChange: function(obj, change, x){
 
         if (HTMLWidgets.shinyMode && excel) {
+
+        if(1==1) {
+          excel.hideIndex();
+          console.log('hideIndex')
+        }
 
           var changedData = getOnChangeData (excel.getData(), this.getConfig().columns, excel.getHeaders());
 
