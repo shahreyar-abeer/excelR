@@ -55,6 +55,7 @@
 #' The width value specified in 'columns' param will have highest precendence followed by autoWidth.
 #' @param getSelectedData a boolean value indicating whether the there should be trigger for data selection or not.
 #' By default this is set to false.
+#' @param freezeColumns a numeric value that will freeze the given number of columns, default 0.
 #' @param  ... other jexcel parameters, e.g., updateTable
 #' @import jsonlite
 #' @import htmlwidgets
@@ -95,6 +96,8 @@ excelTable <-
            autoWidth = TRUE,
            autoFill = FALSE,
            getSelectedData = FALSE,
+           freezeColumns = 0,
+           hideIndex = TRUE,
            ...
            ) {
     # List of parameters to send to js
@@ -112,6 +115,9 @@ excelTable <-
       }
 
     }
+
+
+    paramList$freezeColumns = freezeColumns
 
     # Check column
     # If both columns and colHeaders are not specified, use the column names of the dataframe/matrix
@@ -342,7 +348,8 @@ excelTable <-
       "showToolbar",
       "autoWidth",
       "autoFill",
-      "getSelectedData"
+      "getSelectedData",
+      "hideIndex"
     )) {
       argvalue <- get(arg)
       if(!is.null(argvalue)) {
